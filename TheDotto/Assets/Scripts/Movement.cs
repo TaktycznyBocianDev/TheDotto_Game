@@ -14,10 +14,13 @@ public class Movement : MonoBehaviour
     [Header("How strong will be jump")]
     [SerializeField] float jumpForce;
 
+    [Header("Give it some animations")]
+    [SerializeField] Animator animator;
+
     //Some staff that we need
     bool playerWantJump;
     float horizontalInput;
-    SpriteRenderer rend;
+    SpriteRenderer rend; 
     Rigidbody2D rb;
 
     void Start()
@@ -47,6 +50,7 @@ public class Movement : MonoBehaviour
     void SetIsOnGround(bool isGrounded)
     {
         isOnGround = isGrounded;
+        animator.SetBool("isJumping", false);
     }
 
     //Phisics calculations - movement and jump
@@ -61,15 +65,17 @@ public class Movement : MonoBehaviour
         if (playerWantJump && isOnGround)
         {
 
-                rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode2D.Impulse);
-                playerWantJump = false;
-                isOnGround = false;
+            rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode2D.Impulse);
+            animator.SetBool("isJumping", true);
+            playerWantJump = false;
+            isOnGround = false;
 
         }
     }
     void MovePlayer()
     {
         rb.velocity = new Vector2(horizontalInput * moveSpeed, rb.velocity.y);
+        AnimatePlayerRun(rb.velocity.x);
     }
     void FlipPlayer()
     {
@@ -88,6 +94,11 @@ public class Movement : MonoBehaviour
         {
             playerWantJump = true;
         }
+    }
+
+    void AnimatePlayerRun(float speed)
+    {
+        animator.SetFloat("Speed", Mathf.Abs(speed)); 
     }
 
 }
